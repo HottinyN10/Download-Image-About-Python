@@ -1,0 +1,54 @@
+import os
+import requests
+from bs4 import BeautifulSoup
+from urllib.parse import urljoin
+
+# Tạo thư mục lưu ảnh nếu chưa có
+def create_folder(folder_name):
+    if not os.path.exists(folder_name):
+        os.makedirs(folder_name)
+
+# Tải ảnh từ URL và lưu vào thư mục
+def download_image(image_url, folder_name):
+    try:
+        response = requests.get(image_url)
+        if response.status_code == 200:
+            image_name = os.path.join(folder_name, image_url.split('/')[-1])
+            with open(image_name, 'wb') as file:
+                file.write(response.content)
+            print(f"Tải thành công: {image_name}")
+        else:
+            print(f"Lỗi tải ảnh: {image_url}")
+    except Exception as e:
+        print(f"Lỗi: {e}")
+
+# Lấy các URL ảnh từ một trang web
+def get_image_urls(web_url):
+    try:
+        response = requests.get(web_url)
+        soup = BeautifulSoup(response.text, 'html.parser')
+        image_tags = soup.find_all('img')
+        image_urls = [urljoin(web_url, img['src']) for img in image_tags if 'src' in img.attrs]
+        return image_urls
+    except Exception as e:
+        print(f"Lỗi: {e}")
+        return []
+
+# Danh sách các trang web chứa ảnh
+websites = [
+    'https://example.com/page1',  # Thay thế bằng URL thật
+    'https://example.com/page2'
+]
+
+# Tên thư mục để lưu ảnh
+folder_name = 'A'
+
+# Tạo thư mục
+create_folder(folder_name)
+
+# Tải ảnh từ các trang web đã cho
+for website in websites:
+    print(f"Đang xử lý trang web: {website}")
+    image_urls = get_image_urls(website)
+    for image_url in image_urls:
+        download_image(image_url, folder_name)
