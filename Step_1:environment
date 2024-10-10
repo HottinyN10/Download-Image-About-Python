@@ -1,0 +1,3 @@
+Bạn cần cài đặt thư viện requests và beautifulsoup4 để dễ dàng thao tác với các URL và lấy dữ liệu ảnh từ các trang web:
+
+pip install requests beautifulsoup4
